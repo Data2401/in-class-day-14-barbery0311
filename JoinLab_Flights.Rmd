@@ -24,13 +24,19 @@ my_flights <- na.omit(my_flights) ## this dataset has data on cancelled flights 
 Create a dataframe of the average arrival delays for each _destination_
 
 ```{r}
+avg_arrival_delay<- my_flights %>%
+  group_by(dest) %>%
+  summarize(avg_arrival_delays = mean(arr_delay, na.rm = TRUE))
+
+avg_arrival_delay
 
 ```
 
 Then use `left_join()` to join on the "airports" dataframe, which has the airport information.
 
 ```{r}
-
+dest_delays <-left_join(avg_arrival_delay, airports, by = c("dest" = "faa"))
+dest_delays
 ```
 
 
@@ -39,7 +45,8 @@ Note here: the column names don't match anymore!
 Which airport had the largest average arrival delay?
 
 ```{r}
-
+dest_delays %>%
+slice_max(avg_arrival_delays, n = 1)
 ```
 
 
@@ -48,16 +55,23 @@ What is the average departure delay for each airline? To answer this with someth
 
 
 ```{r}
+avg_departure_delay <- my_flights %>%
+  group_by(carrier) %>%
+  summarize(avg_departure_delays = mean(dep_delay, na.rm = TRUE)) 
 
+airline_delays <- left_join(avg_departure_delay, airlines, by = "carrier")
 
-````
+avg_departure_delay
+```
+
 
 Which airline had the smallest average departure delay? 
 
 
 
 ```{r}
-
+airline_delays %>%
+  slice_min(avg_departure_delays, n = 1)
 
 
 ```
